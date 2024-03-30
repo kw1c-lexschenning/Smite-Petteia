@@ -1,6 +1,8 @@
-//author: Lex schenning
-//date: 17/01/2023
-//description: This script is used to manage the game
+// Author: Lex Schenning
+// Date: 17/01/2023
+// Description: This script manages the game logic.
+
+// Importing necessary libraries
 using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,72 +15,75 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    public List<Card> deck = new List<Card>();
-    private List<int> usedIndices = new List<int>();
-    public GameObject cardPrefab;
-    public Transform[] FriendlyCardSlots;
-    public Transform[] EnemyCardSlots;
-    public Transform[] SpawnCardSlots;
-    public Transform[] EnemySpawnCardSlots;
-    public int i;
-    public int a;
-    public int EnemyPlayerHealth;
-    public int FriendlyPlayerHealth;
-    public int round;
-    public int Friendlyhealth;
-    public int Friendlyattack;
-    public int Enemyhealth;
-    public int Enemyattack;
-    public int Boardmana;
-    public int EnemyPower;
-    public int TotalEnemyPower;
-    public int FriendlyPower;
-    public int TotalFriendlyPower;
-    public int MaxPower;
-    public TMP_Text PlayerHPText;
-    public TMP_Text EnemyHPText;
-    public TMP_Text RoundCounter;
-    public TMP_Text PowerCounter;
-    public TMP_Text PowerSpentCounter;
-    public TMP_Text Message;
-    public Button CardRefresh;
-    public Button EndTurn;
-    public CardDisplay cardDisplayPrefab;
+    // Declaring variables
+    public List<Card> deck = new List<Card>(); // List of cards in the deck
+    private List<int> usedIndices = new List<int>(); // Indices of used cards
+    public GameObject cardPrefab; // Prefab for card game object
+    public Transform[] FriendlyCardSlots; // Slots for friendly cards
+    public Transform[] EnemyCardSlots; // Slots for enemy cards
+    public Transform[] SpawnCardSlots; // Slots for spawning friendly cards
+    public Transform[] EnemySpawnCardSlots; // Slots for spawning enemy cards
+    public int i; // Index variable
+    public int a; // Index variable
+    public int EnemyPlayerHealth; // Health of enemy player
+    public int FriendlyPlayerHealth; // Health of friendly player
+    public int round; // Current round number
+    public int Friendlyhealth; // Health of friendly cards
+    public int Friendlyattack; // Attack power of friendly cards
+    public int Enemyhealth; // Health of enemy cards
+    public int Enemyattack; // Attack power of enemy cards
+    public int Boardmana; // Current mana on board
+    public int EnemyPower; // Power of enemy cards
+    public int TotalEnemyPower; // Total power of enemy cards
+    public int FriendlyPower; // Power of friendly cards
+    public int TotalFriendlyPower; // Total power of friendly cards
+    public int MaxPower; // Maximum power allowed
+    public TMP_Text PlayerHPText; // Text for displaying friendly player health
+    public TMP_Text EnemyHPText; // Text for displaying enemy player health
+    public TMP_Text RoundCounter; // Text for displaying current round number
+    public TMP_Text PowerCounter; // Text for displaying total power
+    public TMP_Text PowerSpentCounter; // Text for displaying power spent
+    public TMP_Text Message; // Text for displaying messages
+    public Button CardRefresh; // Button for refreshing cards
+    public Button EndTurn; // Button for ending turn
+    public CardDisplay cardDisplayPrefab; // Prefab for card display
 
-
-    private void Awake()
+    // Start is called before the first frame update
+    private void Start()
     {
 
     }
-    void Start()
-    {
 
-
-    }
-    void Update()
+    // Update is called once per frame
+    private void Update()
     {
-        
+        // Update the power of friendly board
         GetFriendlyboardPower();
-
     }
 
-    public void ReturnToMenu() 
+    // Return to the main menu
+    public void ReturnToMenu()
     {
         SceneManager.LoadSceneAsync((int)SceneIndexes.SceneIndex.MainMenu);
     }
 
+    // Start a new round
     public void Roundstart()
     {
+        // Update player display
         UpdatePlayerDisplay();
         round++;
         RoundCounter.text = "" + round;
         CardRefresh.interactable = true;
         
+        // Draw enemy cards
         DrawEnemyCards();
+        // Calculate enemy board power and execute enemy player algorithm
         GetEnemyboardPower();
         EnemyPlayerAlgorithm();   
     }
 
+    // Calculate the total power of friendly board
     public void GetFriendlyboardPower()
     {
         TotalFriendlyPower = 0;
@@ -95,35 +100,25 @@ public class GameManager : MonoBehaviour
                  TotalFriendlyPower = TotalFriendlyPower + FriendlyPower;
             }
 
-
-            
-
             if (TotalFriendlyPower > MaxPower)
             {
-                
-
-                Message.text = "insufficient Power";
-
+                Message.text = "Insufficient Power";
                 EndTurn.interactable = false;
-
-
             }
             else
             {
-                
                 EndTurn.interactable = true;
                 Message.text = "";
-
             }
             
             PowerSpentCounter.text = "" + TotalFriendlyPower;
             PowerCounter.text = "" + MaxPower;
-
         }
 
         TotalFriendlyPower = 0;
     }
 
+    // Calculate the total power of enemy board
     public void GetEnemyboardPower()
     {
         TotalEnemyPower = 0;
@@ -148,7 +143,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
+    // Execute enemy player algorithm
     public void EnemyPlayerAlgorithm()
     {
         for (int i = 0; i < EnemySpawnCardSlots.Length; i++)
@@ -195,39 +190,38 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+
+    // Draw cards for the enemy
     public void DrawEnemyCards()
     {
         for (int i = 0; i < EnemySpawnCardSlots.Length; i++)
         {
             if (EnemySpawnCardSlots[i].childCount < 1)
             {
-
-
                 // Spawn a random card
                 SpawnRandomEnemyCard(i); // Pass the correct slot index
             }
         }
     }
 
+    // Draw cards for the friendly player
     public void DrawFriendlyCards()
     {
         for (int i = 0; i < SpawnCardSlots.Length; i++)
         {
             if (SpawnCardSlots[i].childCount < 1)
             {
-               
-
                 // Spawn a random card
                 SpawnRandomFriendlyCard(i); // Pass the correct slot index
             }
         }
     }
 
+    // Spawn a random card for the enemy
     private void SpawnRandomEnemyCard(int slotIndex)
     {
         // Select a random card from the deck
         Card randCard = deck[UnityEngine.Random.Range(0, deck.Count)];
-        
 
         // Instantiate a new card object using the cardPrefab and assign it to a card slot
         GameObject newCardObject = Instantiate(cardPrefab, EnemySpawnCardSlots[slotIndex]);
@@ -246,21 +240,17 @@ public class GameManager : MonoBehaviour
             // Call the Start method on the CardDisplay (assuming it has a Start method)
             cardDisplay.Start();
         }
-
-        //remove draggabe compnent
-        
-        
+        // Remove draggable component
     }
 
+    // Spawn a random card for the friendly player
     private void SpawnRandomFriendlyCard(int slotIndex)
     {
         // Select a random card from the deck
         Card randCard = deck[UnityEngine.Random.Range(0, deck.Count)];
-       
+
         // Instantiate a new card object using the cardPrefab and assign it to a card slot
         GameObject newCardObject = Instantiate(cardPrefab, SpawnCardSlots[slotIndex]);
-
-
 
         // Get the CardDisplay component from the new card object
         CardDisplay cardDisplay = newCardObject.GetComponent<CardDisplay>();
@@ -277,11 +267,10 @@ public class GameManager : MonoBehaviour
         CardRefresh.interactable = false;
     }
 
+    // Get data of cards on the board
     public void GetCardData()
     {
-
-        //shit be crashing 
-        // asuming that the enemy and friendly cards slots are always the same length
+        // Assuming that the enemy and friendly card slots are always the same length
         for (int a = 0; a < EnemyCardSlots.Length;  a++) 
         {
              Friendlyhealth = 0;
@@ -295,9 +284,7 @@ public class GameManager : MonoBehaviour
                 CardDisplay cardDisplay = cardTransform.GetComponent<CardDisplay>();
 
                 Friendlyattack = int.Parse(cardDisplay.attackText.text);
-                Friendlyhealth = int.Parse(cardDisplay.healthText.text);
-
-                
+                Friendlyhealth = int.Parse(cardDisplay.healthText.text);   
             }
             if (EnemyCardSlots[a].childCount > 0)
             {
@@ -306,101 +293,81 @@ public class GameManager : MonoBehaviour
 
                 Enemyattack = int.Parse(cardDisplay.attackText.text);
                 Enemyhealth = int.Parse(cardDisplay.healthText.text);
-
-               
             }
-            
+            // Execute card fight
             CardFight(a);
-
-
         }
-        
+        // Start a new round
         Roundstart();
-        
     }
 
+    // Simulate a fight between cards
     public void CardFight(int a)
     {
         Enemyhealth -= Friendlyattack;
         Friendlyhealth -= Enemyattack;
 
-
-
         if (FriendlyCardSlots[a].childCount > 0 && EnemyCardSlots[a].childCount > 0)
         {
-
             if (Friendlyhealth <= 0)
             {
-
                 Transform childTransform = FriendlyCardSlots[a].GetChild(0);
                 if (childTransform != null)
                 {
                     Friendlyhealth = 0;
                     Destroy(childTransform.gameObject);
-
-
                 }
-
             }
             if (Enemyhealth <= 0)
             {
-
                 Transform childTransform = EnemyCardSlots[a].GetChild(0);
                 if (childTransform != null)
                 {
                     Enemyhealth = 0;
                     Destroy(childTransform.gameObject);
-
                 }
-
             }
-
             if (Enemyhealth < 0)
             {
                 DamageEnemyplayer();
             }
-
-
             if (Friendlyhealth < 0)
             {
                 DamageFriendlyplayer();
             }
-
             UpdateCardDisplay(a);
         }
     }
 
+    // Deal damage to the friendly player
     public void DamageFriendlyplayer()
     {        
+        // here Friendlyhealth is a - value
         FriendlyPlayerHealth += Friendlyhealth;
     }
 
+    // Deal damage to the enemy player
     public void DamageEnemyplayer()
     {
+        // here Friendlyhealth is a - value
         EnemyPlayerHealth += Enemyhealth;
     }
 
+    // Update card display after a fight
     public void UpdateCardDisplay(int a)
     {
-       
-
         Transform cardTransformEnemy = EnemyCardSlots[a].GetChild(0);
         CardDisplay cardDisplayEnemy = cardTransformEnemy.GetComponent<CardDisplay>();
 
-
         cardDisplayEnemy.healthText.text = Enemyhealth.ToString();
-
-
-        
 
         Transform cardTransformFriendly = FriendlyCardSlots[a].GetChild(0);
         CardDisplay cardDisplayFriendly = cardTransformFriendly.GetComponent<CardDisplay>();
 
-
-
         cardDisplayFriendly.healthText.text = Friendlyhealth.ToString();
     }
 
+    // Update player display after a fight
     public void UpdatePlayerDisplay()
     {
         PlayerHPText.text = FriendlyPlayerHealth.ToString();

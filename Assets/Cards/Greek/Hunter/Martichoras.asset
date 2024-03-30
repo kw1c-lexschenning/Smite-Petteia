@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc4058ac4acca5b40ad120acd3ecd040, type: 3}
+  m_Name: Martichoras
+  m_EditorClassIdentifier: 
+  cardObject: {fileID: 0}
+  id: 6
+  name: Martichoras
+  description: THE MANTICORE KING
+  artwork: {fileID: 21300000, guid: d261a836f1ff9584eb3d8d0e8ec58c9f, type: 3}
+  PowerCost: 4
+  attack: 4
+  health: 6
